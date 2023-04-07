@@ -1,7 +1,6 @@
 package com.demo.mymovies.utils;
 
 import android.net.Uri;
-import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -13,8 +12,6 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public class NetworkUtils {
 
@@ -25,7 +22,7 @@ public class NetworkUtils {
     private static final String PARAMS_SORT_BY = "sort_by";
     private static final String PARAMS_PAGE = "page";
 
-    private static final String API_KEY = "{API_KEY}";
+    private static final String API_KEY = "b8ac81393cd950e94d455617d47aa070";
     private static final String LANGUAGE_VALUE = "ru-RU";
     private static final String SORT_BY_POPULARITY = "popularity.desc";
     private static final String SORT_BY_TOP_RATED = "vote_average.desc";
@@ -58,45 +55,38 @@ public class NetworkUtils {
     }
 
     public static JSONObject getJSONFromNetwork(int sortBy, int page) {
-        URL url = buildURL(sortBy, page);
-        NetworkUtils networkUtils = new NetworkUtils();
-        Log.i("URL_RESULT_getJSON", url.toString());
-        ExecutorService executor = Executors.newSingleThreadExecutor();
-        executor.execute(new Runnable() {
-            @Override
-            public void run() {
-                Log.i("URL_RESULT_execute", url.toString());
-                if (url == null) {
-                    return;
+        Thread downloadJSONTask = new Thread(() -> {
+            URL url = buildURL(sortBy, page);
+            if (url == null) {
+                return;
+            }
+            HttpURLConnection connection = null;
+            try {
+                connection = (HttpURLConnection) url.openConnection();
+                InputStream inputStream = connection.getInputStream();
+                InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+                BufferedReader reader = new BufferedReader(inputStreamReader);
+                StringBuilder builder = new StringBuilder();
+                String line = reader.readLine();
+                while (line != null) {
+                    builder.append(line);
+                    line = reader.readLine();
                 }
-                HttpURLConnection connection = null;
-                try {
-                    connection = (HttpURLConnection) url.openConnection();
-                    InputStream inputStream = connection.getInputStream();
-                    InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
-                    BufferedReader reader = new BufferedReader(inputStreamReader);
-                    StringBuilder builder = new StringBuilder();
-                    String line = reader.readLine();
-                    while (line != null) {
-                        builder.append(line);
-                        line = reader.readLine();
-                    }
-                    result = new JSONObject(builder.toString());
-                    if (result == null) {
-                        Log.i("URL_RESULT_execute_JSON", "null");
-                    } else {
-                        Log.i("URL_RESULT_execute_JSON", "no-null");
-                    }
-                } catch (IOException | JSONException e) {
-                    e.printStackTrace();
-                } finally {
-                    if (connection != null) {
-                        connection.disconnect();
-                    }
+                result = new JSONObject(builder.toString());
+            } catch (IOException | JSONException e) {
+                e.printStackTrace();
+            } finally {
+                if (connection != null) {
+                    connection.disconnect();
                 }
             }
         });
-        Log.i("URL_RESULT_JSON", result.toString());
+        downloadJSONTask.start();
+        try {
+            downloadJSONTask.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         return result;
     }
 }
