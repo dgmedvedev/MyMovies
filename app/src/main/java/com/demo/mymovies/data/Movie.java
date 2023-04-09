@@ -1,7 +1,11 @@
 package com.demo.mymovies.data;
 
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+
+@Entity(tableName = "movies")
 public class Movie {
-    private int id;
+    @PrimaryKey private int id;
     private int voteCount;
     private double voteAverage;
     private String title;
