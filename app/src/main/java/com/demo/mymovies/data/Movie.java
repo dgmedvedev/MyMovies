@@ -12,7 +12,7 @@ public class Movie {
     private String backdropPath;
     private String releaseDate;
 
-    public Movie(int id, int voteCount, double voteAverage, String title, String originalTitle, String overview, String posterPath, String bigPosterPath,String backdropPath, String releaseDate) {
+    public Movie(int id, int voteCount, double voteAverage, String title, String originalTitle, String overview, String posterPath, String bigPosterPath, String backdropPath, String releaseDate) {
         this.id = id;
         this.voteCount = voteCount;
         this.voteAverage = voteAverage;
