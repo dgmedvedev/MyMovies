@@ -2,7 +2,6 @@ package com.demo.mymovies;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -37,15 +36,15 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         viewModel = new ViewModelProvider(this).get(MainViewModel.class);
+        switchSort = findViewById(R.id.switchSort);
+        textViewPopularity = findViewById(R.id.textViewPopularity);
+        textViewTopRated = findViewById(R.id.textViewTopRated);
         recyclerViewPosters = findViewById(R.id.recyclerViewPosters);
         recyclerViewPosters.setLayoutManager(new GridLayoutManager(this, 2));
         movieAdapter = new MovieAdapter();
         recyclerViewPosters.setAdapter(movieAdapter);
 
-        textViewPopularity = findViewById(R.id.textViewPopularity);
-        textViewTopRated = findViewById(R.id.textViewTopRated);
 
-        switchSort = findViewById(R.id.switchSort);
         switchSort.setChecked(true);
         switchSort.setOnCheckedChangeListener((compoundButton, isChecked) -> setMethodOfSort(isChecked));
         switchSort.setChecked(false);
