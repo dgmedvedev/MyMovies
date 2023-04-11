@@ -21,7 +21,7 @@ public class JSONUtils {
     private static final String KEY_RELEASE_DATE = "release_date";
 
     public static final String BASE_POSTER_URL = "https://image.tmdb.org/t/p/";
-    public static final String SMALL_POSTER_SIZE = "w500";
+    public static final String SMALL_POSTER_SIZE = "w342";
     public static final String BIG_POSTER_SIZE = "w780";
 
     public static ArrayList<Movie> getMoviesFromJSON(JSONObject jsonObject) {

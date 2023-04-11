@@ -1,6 +1,8 @@
 package com.demo.mymovies;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -9,6 +11,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.demo.mymovies.data.MainViewModel;
 import com.demo.mymovies.data.Movie;
 import com.demo.mymovies.utils.JSONUtils;
 import com.demo.mymovies.utils.NetworkUtils;
@@ -16,6 +19,7 @@ import com.demo.mymovies.utils.NetworkUtils;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -25,19 +29,22 @@ public class MainActivity extends AppCompatActivity {
     private TextView textViewPopularity;
     private TextView textViewTopRated;
 
+    private MainViewModel viewModel;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        viewModel = new ViewModelProvider(this).get(MainViewModel.class);
+        switchSort = findViewById(R.id.switchSort);
+        textViewPopularity = findViewById(R.id.textViewPopularity);
+        textViewTopRated = findViewById(R.id.textViewTopRated);
         recyclerViewPosters = findViewById(R.id.recyclerViewPosters);
         recyclerViewPosters.setLayoutManager(new GridLayoutManager(this, 2));
         movieAdapter = new MovieAdapter();
         recyclerViewPosters.setAdapter(movieAdapter);
 
-        textViewPopularity = findViewById(R.id.textViewPopularity);
-        textViewTopRated = findViewById(R.id.textViewTopRated);
 
-        switchSort = findViewById(R.id.switchSort);
         switchSort.setChecked(true);
         switchSort.setOnCheckedChangeListener((compoundButton, isChecked) -> setMethodOfSort(isChecked));
         switchSort.setChecked(false);
@@ -58,6 +65,10 @@ public class MainActivity extends AppCompatActivity {
             setMethodOfSort(true);
             switchSort.setChecked(true);
         });
+
+        LiveData<List<Movie>> moviesFromLiveData = viewModel.getMovies();
+        // Теперь каждый раз, когда данные в БД будут меняться, мы их будем устанавливать у адаптера
+        moviesFromLiveData.observe(this, movies -> movieAdapter.setMovies(movies));
     }
 
     private void setMethodOfSort(boolean isTopRated) {
@@ -71,8 +82,17 @@ public class MainActivity extends AppCompatActivity {
             textViewPopularity.setTextColor(getResources().getColor(R.color.colorAccent));
             textViewTopRated.setTextColor(getResources().getColor(R.color.white));
         }
+        downloadData(methodOfSort, 1);
+    }
+
+    private void downloadData(int methodOfSort, int page) {
         JSONObject jsonObject = NetworkUtils.getJSONFromNetwork(methodOfSort, 1);
         ArrayList<Movie> movies = JSONUtils.getMoviesFromJSON(jsonObject);
-        movieAdapter.setMovies(movies);
+        if (movies != null && !movies.isEmpty()) {
+            viewModel.deleteAllMovies();
+            for (Movie movie : movies) {
+                viewModel.insertMovie(movie);
+            }
+        }
     }
 }
