@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -51,6 +52,8 @@ public class MainActivity extends AppCompatActivity {
 
         movieAdapter.setOnPosterClickListener((position -> {
             Toast.makeText(this, "Позиция " + position, Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(MainActivity.this,DetailActivity.class);
+            intent.putExtra("position",position);
         }));
 
         movieAdapter.setOnReachEndListener(() -> {
