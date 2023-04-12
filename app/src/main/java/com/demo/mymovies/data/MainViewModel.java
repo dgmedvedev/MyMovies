@@ -13,12 +13,14 @@ import java.util.concurrent.Executors;
 public class MainViewModel extends AndroidViewModel {
     private static MovieDatabase database;
     private LiveData<List<Movie>> movies;
+    private LiveData<List<FavouriteMovie>> favouriteMovies;
     private Movie tempMovie;
 
     public MainViewModel(@NonNull Application application) {
         super(application);
         database = MovieDatabase.getInstance(getApplication());
         movies = database.movieDao().getAllMovies();
+        favouriteMovies = database.movieDao().getAllFavouriteMovies();
     }
 
     public Movie getMovieById(int id) {
@@ -48,6 +50,20 @@ public class MainViewModel extends AndroidViewModel {
         });
     }
 
+    public void insertFavouriteMovie(FavouriteMovie movie) {
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        executor.execute(() -> {
+            database.movieDao().insertFavouriteMovie(movie);
+        });
+    }
+
+    public void deleteFavouriteMovie(FavouriteMovie movie) {
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        executor.execute(() -> {
+            database.movieDao().deleteFavouriteMovie(movie);
+        });
+    }
+
     public void deleteAllMovies() {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.execute(() -> {
@@ -57,5 +73,9 @@ public class MainViewModel extends AndroidViewModel {
 
     public LiveData<List<Movie>> getMovies() {
         return movies;
+    }
+
+    public LiveData<List<FavouriteMovie>> getFavouriteMovies() {
+        return favouriteMovies;
     }
 }
