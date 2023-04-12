@@ -51,9 +51,11 @@ public class MainActivity extends AppCompatActivity {
         switchSort.setChecked(false);
 
         movieAdapter.setOnPosterClickListener((position -> {
+            Movie movie = movieAdapter.getMovies().get(position);
             Toast.makeText(this, "Позиция " + position, Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(MainActivity.this,DetailActivity.class);
-            intent.putExtra("position",position);
+            intent.putExtra("id",movie.getId());
+            startActivity(intent);
         }));
 
         movieAdapter.setOnReachEndListener(() -> {
