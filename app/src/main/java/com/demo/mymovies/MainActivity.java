@@ -45,16 +45,14 @@ public class MainActivity extends AppCompatActivity {
         movieAdapter = new MovieAdapter();
         recyclerViewPosters.setAdapter(movieAdapter);
 
-
         switchSort.setChecked(true);
         switchSort.setOnCheckedChangeListener((compoundButton, isChecked) -> setMethodOfSort(isChecked));
         switchSort.setChecked(false);
 
         movieAdapter.setOnPosterClickListener((position -> {
             Movie movie = movieAdapter.getMovies().get(position);
-            Toast.makeText(this, "Позиция " + position, Toast.LENGTH_SHORT).show();
-            Intent intent = new Intent(MainActivity.this,DetailActivity.class);
-            intent.putExtra("id",movie.getId());
+            Intent intent = new Intent(MainActivity.this, DetailActivity.class);
+            intent.putExtra("id", movie.getId());
             startActivity(intent);
         }));
 
