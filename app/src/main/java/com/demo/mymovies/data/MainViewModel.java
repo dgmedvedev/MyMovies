@@ -1,6 +1,7 @@
 package com.demo.mymovies.data;
 
 import android.app.Application;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -13,12 +14,15 @@ import java.util.concurrent.Executors;
 public class MainViewModel extends AndroidViewModel {
     private static MovieDatabase database;
     private LiveData<List<Movie>> movies;
+    private LiveData<List<FavouriteMovie>> favouriteMovies;
     private Movie tempMovie;
+    private FavouriteMovie tempFavouriteMovie;
 
     public MainViewModel(@NonNull Application application) {
         super(application);
         database = MovieDatabase.getInstance(getApplication());
         movies = database.movieDao().getAllMovies();
+        favouriteMovies = database.movieDao().getAllFavouriteMovies();
     }
 
     public Movie getMovieById(int id) {
@@ -29,9 +33,22 @@ public class MainViewModel extends AndroidViewModel {
         try {
             getMovieTask.join();
         } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
         return tempMovie;
+    }
+
+    public FavouriteMovie getFavouriteMovieById(int id) {
+        Thread getFavouriteMovieTask = new Thread(() -> {
+            tempFavouriteMovie = database.movieDao().getFavouriteMovieById(id);
+        });
+        getFavouriteMovieTask.start();
+        try {
+            getFavouriteMovieTask.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return tempFavouriteMovie;
     }
 
     public void insertMovie(Movie movie) {
@@ -48,6 +65,22 @@ public class MainViewModel extends AndroidViewModel {
         });
     }
 
+    public void insertFavouriteMovie(FavouriteMovie movie) {
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        executor.execute(() -> {
+            database.movieDao().insertFavouriteMovie(movie);
+        });
+        //executor.shutdown();
+    }
+
+    public void deleteFavouriteMovie(FavouriteMovie movie) {
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        executor.execute(() -> {
+            database.movieDao().deleteFavouriteMovie(movie);
+        });
+        //executor.shutdown();
+    }
+
     public void deleteAllMovies() {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.execute(() -> {
@@ -57,5 +90,9 @@ public class MainViewModel extends AndroidViewModel {
 
     public LiveData<List<Movie>> getMovies() {
         return movies;
+    }
+
+    public LiveData<List<FavouriteMovie>> getFavouriteMovies() {
+        return favouriteMovies;
     }
 }

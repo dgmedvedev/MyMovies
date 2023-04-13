@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -44,13 +45,15 @@ public class MainActivity extends AppCompatActivity {
         movieAdapter = new MovieAdapter();
         recyclerViewPosters.setAdapter(movieAdapter);
 
-
         switchSort.setChecked(true);
         switchSort.setOnCheckedChangeListener((compoundButton, isChecked) -> setMethodOfSort(isChecked));
         switchSort.setChecked(false);
 
         movieAdapter.setOnPosterClickListener((position -> {
-            Toast.makeText(this, "Позиция " + position, Toast.LENGTH_SHORT).show();
+            Movie movie = movieAdapter.getMovies().get(position);
+            Intent intent = new Intent(MainActivity.this, DetailActivity.class);
+            intent.putExtra("id", movie.getId());
+            startActivity(intent);
         }));
 
         movieAdapter.setOnReachEndListener(() -> {
