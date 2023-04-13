@@ -29,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
     private Switch switchSort;
     private TextView textViewPopularity;
     private TextView textViewTopRated;
+    private Toast toastMessage;
 
     private MainViewModel viewModel;
 
@@ -57,7 +58,11 @@ public class MainActivity extends AppCompatActivity {
         }));
 
         movieAdapter.setOnReachEndListener(() -> {
-            Toast.makeText(this, "Конец списка", Toast.LENGTH_SHORT).show();
+            if (toastMessage != null) {
+                toastMessage.cancel();
+            }
+            toastMessage = Toast.makeText(this, "Конец списка", Toast.LENGTH_SHORT);
+            toastMessage.show();
         });
 
         textViewPopularity.setOnClickListener((view) -> {

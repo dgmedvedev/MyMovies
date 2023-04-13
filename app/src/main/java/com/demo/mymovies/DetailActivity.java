@@ -26,6 +26,8 @@ public class DetailActivity extends AppCompatActivity {
     private TextView textViewReleaseDate;
     private TextView textViewOverview;
 
+    private Toast toastMessage;
+
     private int id;
     Movie movie;
     FavouriteMovie favouriteMovie;
@@ -47,13 +49,11 @@ public class DetailActivity extends AppCompatActivity {
         Intent intent = getIntent();
         if (intent != null && intent.hasExtra("id")) {
             id = intent.getIntExtra("id", -1);
-            Log.i("ID_Intent", Integer.toString(id));
         } else {
             finish();
         }
         viewModel = new ViewModelProvider(this).get(MainViewModel.class);
         movie = viewModel.getMovieById(id);
-        Log.i("ID_Movie", Integer.toString(movie.getId()));
         Picasso.get().load(movie.getBigPosterPath()).into(imageViewBigPoster);
         textViewTitle.setText(movie.getTitle());
         textViewOriginalTitle.setText(movie.getOriginalTitle());
@@ -63,12 +63,17 @@ public class DetailActivity extends AppCompatActivity {
         setFavourite();
 
         imageViewAddToFavourite.setOnClickListener((view -> {
+            if (toastMessage != null) {
+                toastMessage.cancel();
+            }
             if (favouriteMovie == null) {
                 viewModel.insertFavouriteMovie(new FavouriteMovie(movie));
-                Toast.makeText(this, R.string.add_to_favourite, Toast.LENGTH_SHORT).show();
+                toastMessage = Toast.makeText(this, R.string.add_to_favourite, Toast.LENGTH_SHORT);
+                toastMessage.show();
             } else {
                 viewModel.deleteFavouriteMovie(favouriteMovie);
-                Toast.makeText(this, R.string.remove_from_favourite, Toast.LENGTH_SHORT).show();
+                toastMessage = Toast.makeText(this, R.string.remove_from_favourite, Toast.LENGTH_SHORT);
+                toastMessage.show();
             }
             try {
                 // Усыпляю поток, т.к. метод setFavourite() очень быстро отрабатывает,
@@ -83,7 +88,6 @@ public class DetailActivity extends AppCompatActivity {
 
     private void setFavourite() {
         favouriteMovie = viewModel.getFavouriteMovieById(id);
-        Log.i("ID_FavouriteMovie", Integer.toString(movie.getId()));
         if (favouriteMovie == null) {
             imageViewAddToFavourite.setImageResource(R.drawable.favourite_add_to);
         } else {

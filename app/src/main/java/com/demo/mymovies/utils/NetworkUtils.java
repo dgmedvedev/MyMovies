@@ -23,7 +23,7 @@ public class NetworkUtils {
     private static final String PARAMS_PAGE = "page";
     private static final String PARAMS_MIN_VOTE_COUNT = "vote_count.gte";
 
-    private static final String API_KEY = "b8ac81393cd950e94d455617d47aa070";//???????????????
+    private static final String API_KEY = "b8ac81393cd950e???????????????";//???????????????
     private static final String LANGUAGE_VALUE = "ru-RU";
     private static final String SORT_BY_POPULARITY = "popularity.desc";
     private static final String SORT_BY_TOP_RATED = "vote_average.desc";
