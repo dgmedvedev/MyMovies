@@ -64,6 +64,7 @@ public class MainActivity extends AppCompatActivity {
             setMethodOfSort(false);
             switchSort.setChecked(false);
         });
+
         textViewTopRated.setOnClickListener((view) -> {
             setMethodOfSort(true);
             switchSort.setChecked(true);
