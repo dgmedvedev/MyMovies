@@ -71,6 +71,8 @@ public class DetailActivity extends AppCompatActivity {
                 Toast.makeText(this, R.string.remove_from_favourite, Toast.LENGTH_SHORT).show();
             }
             try {
+                // Усыпляю поток, т.к. метод setFavourite() очень быстро отрабатывает,
+                // что приводит к ошибке. Позже разобраться
                 Thread.sleep(100);
                 setFavourite();
             } catch (InterruptedException e) {
