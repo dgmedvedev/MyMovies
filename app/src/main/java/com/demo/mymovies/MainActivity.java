@@ -74,7 +74,9 @@ public class MainActivity extends AppCompatActivity {
         recyclerViewPosters.setAdapter(movieAdapter);
 
         switchSort.setChecked(true);
-        switchSort.setOnCheckedChangeListener((compoundButton, isChecked) -> setMethodOfSort(isChecked));
+        switchSort.setOnCheckedChangeListener((compoundButton, isChecked) -> {
+            setMethodOfSort(isChecked);
+        });
         switchSort.setChecked(false);
 
         movieAdapter.setOnPosterClickListener((position -> {
@@ -126,9 +128,12 @@ public class MainActivity extends AppCompatActivity {
         ArrayList<Movie> movies = JSONUtils.getMoviesFromJSON(jsonObject);
         if (movies != null && !movies.isEmpty()) {
             viewModel.deleteAllMovies();
-            for (Movie movie : movies) {
-                viewModel.insertMovie(movie);
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
+            viewModel.insertListMovies(movies);
         }
     }
 }

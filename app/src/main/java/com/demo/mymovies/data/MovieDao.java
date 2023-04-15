@@ -26,6 +26,9 @@ public interface MovieDao {
     void deleteAllMovies();
 
     @Insert
+    void insertListMovies(List<Movie> movies);
+
+    @Insert
     void insertMovie(Movie movie);
 
     @Delete

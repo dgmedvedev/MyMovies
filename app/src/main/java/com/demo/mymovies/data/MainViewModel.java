@@ -1,7 +1,6 @@
 package com.demo.mymovies.data;
 
 import android.app.Application;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -51,6 +50,13 @@ public class MainViewModel extends AndroidViewModel {
         return tempFavouriteMovie;
     }
 
+    public void insertListMovies(List<Movie> movies) {
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        executor.execute(() -> {
+            database.movieDao().insertListMovies(movies);
+        });
+    }
+
     public void insertMovie(Movie movie) {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.execute(() -> {
@@ -70,7 +76,6 @@ public class MainViewModel extends AndroidViewModel {
         executor.execute(() -> {
             database.movieDao().insertFavouriteMovie(movie);
         });
-        //executor.shutdown();
     }
 
     public void deleteFavouriteMovie(FavouriteMovie movie) {
@@ -78,7 +83,6 @@ public class MainViewModel extends AndroidViewModel {
         executor.execute(() -> {
             database.movieDao().deleteFavouriteMovie(movie);
         });
-        //executor.shutdown();
     }
 
     public void deleteAllMovies() {
