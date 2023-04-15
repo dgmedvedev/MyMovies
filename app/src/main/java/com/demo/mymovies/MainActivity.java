@@ -78,6 +78,7 @@ public class MainActivity extends AppCompatActivity {
             setMethodOfSort(isChecked);
         });
         switchSort.setChecked(false);
+        downloadData(NetworkUtils.POPULARITY, 1);
 
         movieAdapter.setOnPosterClickListener((position -> {
             Movie movie = movieAdapter.getMovies().get(position);
