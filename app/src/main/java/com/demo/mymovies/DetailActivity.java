@@ -51,10 +51,12 @@ public class DetailActivity extends AppCompatActivity {
             case R.id.itemMain:
                 Intent intent = new Intent(this, MainActivity.class);
                 startActivity(intent);
+                finish();
                 break;
             case R.id.itemFavourite:
                 Intent intentToFavourite = new Intent(this, FavouriteActivity.class);
                 startActivity(intentToFavourite);
+                finish();
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -80,13 +82,14 @@ public class DetailActivity extends AppCompatActivity {
         }
         viewModel = new ViewModelProvider(this).get(MainViewModel.class);
         movie = viewModel.getMovieById(id);
-        Picasso.get().load(movie.getBigPosterPath()).into(imageViewBigPoster);
-        textViewTitle.setText(movie.getTitle());
-        textViewOriginalTitle.setText(movie.getOriginalTitle());
-        textViewOverview.setText(movie.getOverview());
-        textViewReleaseDate.setText(movie.getReleaseDate());
-        textViewRating.setText(Double.toString(movie.getVoteAverage()));
         setFavourite();
+
+        if (movie != null) {
+            downloadContent(movie);
+        }
+        if (favouriteMovie != null) {
+            downloadContent(favouriteMovie);
+        }
 
         imageViewAddToFavourite.setOnClickListener((view -> {
             if (toastMessage != null) {
@@ -119,5 +122,14 @@ public class DetailActivity extends AppCompatActivity {
         } else {
             imageViewAddToFavourite.setImageResource(R.drawable.favourite_remove);
         }
+    }
+
+    private void downloadContent(Movie movie) {
+        Picasso.get().load(movie.getBigPosterPath()).into(imageViewBigPoster);
+        textViewTitle.setText(movie.getTitle());
+        textViewOriginalTitle.setText(movie.getOriginalTitle());
+        textViewOverview.setText(movie.getOverview());
+        textViewReleaseDate.setText(movie.getReleaseDate());
+        textViewRating.setText(Double.toString(movie.getVoteAverage()));
     }
 }

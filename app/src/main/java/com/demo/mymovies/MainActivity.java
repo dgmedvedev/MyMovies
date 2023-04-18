@@ -51,10 +51,12 @@ public class MainActivity extends AppCompatActivity {
             case R.id.itemMain:
                 Intent intent = new Intent(this, MainActivity.class);
                 startActivity(intent);
+                finish();
                 break;
             case R.id.itemFavourite:
                 Intent intentToFavourite = new Intent(this, FavouriteActivity.class);
                 startActivity(intentToFavourite);
+                finish();
                 break;
         }
         return super.onOptionsItemSelected(item);
