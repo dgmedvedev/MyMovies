@@ -1,11 +1,14 @@
 package com.demo.mymovies;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -26,11 +29,38 @@ public class DetailActivity extends AppCompatActivity {
     private TextView textViewReleaseDate;
     private TextView textViewOverview;
 
+    private Toast toastMessage;
+
     private int id;
     Movie movie;
     FavouriteMovie favouriteMovie;
 
     private MainViewModel viewModel;
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
+        switch (id) {
+            case R.id.itemMain:
+                Intent intent = new Intent(this, MainActivity.class);
+                startActivity(intent);
+                finish();
+                break;
+            case R.id.itemFavourite:
+                Intent intentToFavourite = new Intent(this, FavouriteActivity.class);
+                startActivity(intentToFavourite);
+                finish();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,28 +77,32 @@ public class DetailActivity extends AppCompatActivity {
         Intent intent = getIntent();
         if (intent != null && intent.hasExtra("id")) {
             id = intent.getIntExtra("id", -1);
-            Log.i("ID_Intent", Integer.toString(id));
         } else {
             finish();
         }
         viewModel = new ViewModelProvider(this).get(MainViewModel.class);
         movie = viewModel.getMovieById(id);
-        Log.i("ID_Movie", Integer.toString(movie.getId()));
-        Picasso.get().load(movie.getBigPosterPath()).into(imageViewBigPoster);
-        textViewTitle.setText(movie.getTitle());
-        textViewOriginalTitle.setText(movie.getOriginalTitle());
-        textViewOverview.setText(movie.getOverview());
-        textViewReleaseDate.setText(movie.getReleaseDate());
-        textViewRating.setText(Double.toString(movie.getVoteAverage()));
         setFavourite();
 
+        if (movie != null) {
+            downloadContent(movie);
+        }
+        if (favouriteMovie != null) {
+            downloadContent(favouriteMovie);
+        }
+
         imageViewAddToFavourite.setOnClickListener((view -> {
+            if (toastMessage != null) {
+                toastMessage.cancel();
+            }
             if (favouriteMovie == null) {
                 viewModel.insertFavouriteMovie(new FavouriteMovie(movie));
-                Toast.makeText(this, R.string.add_to_favourite, Toast.LENGTH_SHORT).show();
+                toastMessage = Toast.makeText(this, R.string.add_to_favourite, Toast.LENGTH_SHORT);
+                toastMessage.show();
             } else {
                 viewModel.deleteFavouriteMovie(favouriteMovie);
-                Toast.makeText(this, R.string.remove_from_favourite, Toast.LENGTH_SHORT).show();
+                toastMessage = Toast.makeText(this, R.string.remove_from_favourite, Toast.LENGTH_SHORT);
+                toastMessage.show();
             }
             try {
                 // Усыпляю поток, т.к. метод setFavourite() очень быстро отрабатывает,
@@ -83,11 +117,19 @@ public class DetailActivity extends AppCompatActivity {
 
     private void setFavourite() {
         favouriteMovie = viewModel.getFavouriteMovieById(id);
-        Log.i("ID_FavouriteMovie", Integer.toString(movie.getId()));
         if (favouriteMovie == null) {
             imageViewAddToFavourite.setImageResource(R.drawable.favourite_add_to);
         } else {
             imageViewAddToFavourite.setImageResource(R.drawable.favourite_remove);
         }
+    }
+
+    private void downloadContent(Movie movie) {
+        Picasso.get().load(movie.getBigPosterPath()).into(imageViewBigPoster);
+        textViewTitle.setText(movie.getTitle());
+        textViewOriginalTitle.setText(movie.getOriginalTitle());
+        textViewOverview.setText(movie.getOverview());
+        textViewReleaseDate.setText(movie.getReleaseDate());
+        textViewRating.setText(Double.toString(movie.getVoteAverage()));
     }
 }

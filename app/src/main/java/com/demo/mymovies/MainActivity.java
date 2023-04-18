@@ -1,5 +1,6 @@
 package com.demo.mymovies;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProvider;
@@ -8,6 +9,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -29,8 +33,34 @@ public class MainActivity extends AppCompatActivity {
     private Switch switchSort;
     private TextView textViewPopularity;
     private TextView textViewTopRated;
+    private Toast toastMessage;
 
     private MainViewModel viewModel;
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
+        switch (id) {
+            case R.id.itemMain:
+                Intent intent = new Intent(this, MainActivity.class);
+                startActivity(intent);
+                finish();
+                break;
+            case R.id.itemFavourite:
+                Intent intentToFavourite = new Intent(this, FavouriteActivity.class);
+                startActivity(intentToFavourite);
+                finish();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,8 +76,11 @@ public class MainActivity extends AppCompatActivity {
         recyclerViewPosters.setAdapter(movieAdapter);
 
         switchSort.setChecked(true);
-        switchSort.setOnCheckedChangeListener((compoundButton, isChecked) -> setMethodOfSort(isChecked));
+        switchSort.setOnCheckedChangeListener((compoundButton, isChecked) -> {
+            setMethodOfSort(isChecked);
+        });
         switchSort.setChecked(false);
+        downloadData(NetworkUtils.POPULARITY, 1);
 
         movieAdapter.setOnPosterClickListener((position -> {
             Movie movie = movieAdapter.getMovies().get(position);
@@ -57,13 +90,18 @@ public class MainActivity extends AppCompatActivity {
         }));
 
         movieAdapter.setOnReachEndListener(() -> {
-            Toast.makeText(this, "Конец списка", Toast.LENGTH_SHORT).show();
+            if (toastMessage != null) {
+                toastMessage.cancel();
+            }
+            toastMessage = Toast.makeText(this, "Конец списка", Toast.LENGTH_SHORT);
+            toastMessage.show();
         });
 
         textViewPopularity.setOnClickListener((view) -> {
             setMethodOfSort(false);
             switchSort.setChecked(false);
         });
+
         textViewTopRated.setOnClickListener((view) -> {
             setMethodOfSort(true);
             switchSort.setChecked(true);
@@ -93,9 +131,12 @@ public class MainActivity extends AppCompatActivity {
         ArrayList<Movie> movies = JSONUtils.getMoviesFromJSON(jsonObject);
         if (movies != null && !movies.isEmpty()) {
             viewModel.deleteAllMovies();
-            for (Movie movie : movies) {
-                viewModel.insertMovie(movie);
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
+            viewModel.insertListMovies(movies);
         }
     }
 }
