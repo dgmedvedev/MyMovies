@@ -13,6 +13,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
+import com.demo.mymovies.adapters.MovieAdapter;
 import com.demo.mymovies.data.FavouriteMovie;
 import com.demo.mymovies.data.MainViewModel;
 import com.demo.mymovies.data.Movie;
