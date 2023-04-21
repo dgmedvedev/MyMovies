@@ -1,6 +1,11 @@
 package com.demo.mymovies.utils;
 
+import android.content.Context;
 import android.net.Uri;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.loader.content.AsyncTaskLoader;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -25,7 +30,7 @@ public class NetworkUtils {
     private static final String PARAMS_PAGE = "page";
     private static final String PARAMS_MIN_VOTE_COUNT = "vote_count.gte";
 
-    private static final String API_KEY = "b8ac81393cd950e???????????????";//???????????????
+    private static final String API_KEY = "b8ac81393cd950e94d455617d47aa070";//???????????????
     private static final String LANGUAGE_VALUE = "ru-RU";
     private static final String SORT_BY_POPULARITY = "popularity.desc";
     private static final String SORT_BY_TOP_RATED = "vote_average.desc";
@@ -192,5 +197,18 @@ public class NetworkUtils {
             e.printStackTrace();
         }
         return result;
+    }
+
+    public static class JSONLoader extends AsyncTaskLoader<JSONObject>{
+
+        public JSONLoader(@NonNull Context context) {
+            super(context);
+        }
+
+        @Nullable
+        @Override
+        public JSONObject loadInBackground() {
+            return null;
+        }
     }
 }
