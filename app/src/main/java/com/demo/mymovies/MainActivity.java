@@ -16,6 +16,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.demo.mymovies.adapters.MovieAdapter;
 import com.demo.mymovies.data.MainViewModel;
 import com.demo.mymovies.data.Movie;
 import com.demo.mymovies.utils.JSONUtils;
