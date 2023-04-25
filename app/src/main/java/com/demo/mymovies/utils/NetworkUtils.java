@@ -2,6 +2,7 @@ package com.demo.mymovies.utils;
 
 import android.content.Context;
 import android.net.Uri;
+import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -199,16 +200,53 @@ public class NetworkUtils {
         return result;
     }
 
-    public static class JSONLoader extends AsyncTaskLoader<JSONObject>{
+    public static class JSONLoader extends AsyncTaskLoader<JSONObject> {
 
-        public JSONLoader(@NonNull Context context) {
+        private Bundle bundle;
+
+        public JSONLoader(@NonNull Context context, Bundle bundle) {
             super(context);
+            this.bundle = bundle;
         }
 
         @Nullable
         @Override
         public JSONObject loadInBackground() {
-            return null;
+            if (bundle == null) {
+                return null;
+            }
+            String urlAsString = bundle.getString("url");
+            URL url = null;
+            try {
+                url = new URL(urlAsString);
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
+            JSONObject resultJSON = null;
+            if (url == null) {
+                return null;
+            }
+            HttpURLConnection connection = null;
+            try {
+                connection = (HttpURLConnection) url.openConnection();
+                InputStream inputStream = connection.getInputStream();
+                InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+                BufferedReader reader = new BufferedReader(inputStreamReader);
+                StringBuilder builder = new StringBuilder();
+                String line = reader.readLine();
+                while (line != null) {
+                    builder.append(line);
+                    line = reader.readLine();
+                }
+                resultJSON = new JSONObject(builder.toString());
+            } catch (IOException | JSONException e) {
+                e.printStackTrace();
+            } finally {
+                if (connection != null) {
+                    connection.disconnect();
+                }
+            }
+            return resultJSON;
         }
     }
 }
