@@ -44,7 +44,7 @@ public class NetworkUtils {
     static JSONObject resultVideosJSON = null;
     static JSONObject resultReviewsJSON = null;
 
-    private static URL buildURLToVideos(int id) {
+    public static URL buildURLToVideos(int id) {
         Uri uri = Uri.parse(String.format(BASE_URL_VIDEOS, id)).buildUpon()
                 .appendQueryParameter(PARAMS_API_KEY, API_KEY)
                 .appendQueryParameter(PARAMS_LANGUAGE, LANGUAGE_VALUE).build();
@@ -56,7 +56,7 @@ public class NetworkUtils {
         return null;
     }
 
-    private static URL buildURLToReviews(int id) {
+    public static URL buildURLToReviews(int id) {
         Uri uri = Uri.parse(String.format(BASE_URL_REVIEWS, id)).buildUpon()
                 .appendQueryParameter(PARAMS_API_KEY, API_KEY)
                 //.appendQueryParameter(PARAMS_LANGUAGE, LANGUAGE_VALUE)
@@ -69,7 +69,7 @@ public class NetworkUtils {
         return null;
     }
 
-    private static URL buildURL(int sortBy, int page) {
+    public static URL buildURL(int sortBy, int page) {
         URL result = null;
         String methodOfSort;
         if (sortBy == POPULARITY) {
@@ -207,6 +207,12 @@ public class NetworkUtils {
         public JSONLoader(@NonNull Context context, Bundle bundle) {
             super(context);
             this.bundle = bundle;
+        }
+
+        @Override
+        protected void onStartLoading() {
+            super.onStartLoading();
+            forceLoad();
         }
 
         @Nullable
