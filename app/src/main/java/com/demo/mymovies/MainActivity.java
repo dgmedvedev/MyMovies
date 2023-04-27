@@ -140,17 +140,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         Bundle bundle = new Bundle();
         bundle.putString("url", url.toString());
         loaderManager.restartLoader(LOADER_ID, bundle, this);
-//        JSONObject jsonObject = NetworkUtils.getJSONFromNetwork(methodOfSort, 1);
-//        ArrayList<Movie> movies = JSONUtils.getMoviesFromJSON(jsonObject);
-//        if (movies != null && !movies.isEmpty()) {
-//            viewModel.deleteAllMovies();
-//            try {
-//                Thread.sleep(10);
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
-//            viewModel.insertListMovies(movies);
-//        }
     }
 
     @NonNull

@@ -40,7 +40,7 @@ public class NetworkUtils {
     public static final int POPULARITY = 0;
     public static final int TOP_RATED = 1;
 
-//    static JSONObject result = null;
+    //    static JSONObject result = null;
     static JSONObject resultVideosJSON = null;
     static JSONObject resultReviewsJSON = null;
 
