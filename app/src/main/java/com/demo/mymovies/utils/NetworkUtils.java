@@ -40,7 +40,6 @@ public class NetworkUtils {
     public static final int POPULARITY = 0;
     public static final int TOP_RATED = 1;
 
-    //    static JSONObject result = null;
     static JSONObject resultVideosJSON = null;
     static JSONObject resultReviewsJSON = null;
 
@@ -163,42 +162,6 @@ public class NetworkUtils {
         }
         return resultVideosJSON;
     }
-
-//    public static JSONObject getJSONFromNetwork(int sortBy, int page) {
-//        Thread downloadJSONTask = new Thread(() -> {
-//            URL url = buildURL(sortBy, page);
-//            if (url == null) {
-//                return;
-//            }
-//            HttpURLConnection connection = null;
-//            try {
-//                connection = (HttpURLConnection) url.openConnection();
-//                InputStream inputStream = connection.getInputStream();
-//                InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
-//                BufferedReader reader = new BufferedReader(inputStreamReader);
-//                StringBuilder builder = new StringBuilder();
-//                String line = reader.readLine();
-//                while (line != null) {
-//                    builder.append(line);
-//                    line = reader.readLine();
-//                }
-//                result = new JSONObject(builder.toString());
-//            } catch (IOException | JSONException e) {
-//                e.printStackTrace();
-//            } finally {
-//                if (connection != null) {
-//                    connection.disconnect();
-//                }
-//            }
-//        });
-//        downloadJSONTask.start();
-//        try {
-//            downloadJSONTask.join();
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
-//        return result;
-//    }
 
     public static class JSONLoader extends AsyncTaskLoader<JSONObject> {
 

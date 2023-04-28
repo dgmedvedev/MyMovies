@@ -45,6 +45,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private static final int LOADER_ID = 333;
     private LoaderManager loaderManager;
 
+    private static int page = 1;
+    private static boolean isLoading = false;
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -86,6 +89,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
         switchSort.setChecked(true);
         switchSort.setOnCheckedChangeListener((compoundButton, isChecked) -> {
+            page = 1;
             setMethodOfSort(isChecked);
         });
         switchSort.setChecked(false);
@@ -99,11 +103,13 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         }));
 
         movieAdapter.setOnReachEndListener(() -> {
-            if (toastMessage != null) {
-                toastMessage.cancel();
+            if (!isLoading) {
+                if (toastMessage != null) {
+                    toastMessage.cancel();
+                }
+                toastMessage = Toast.makeText(this, "Конец списка", Toast.LENGTH_SHORT);
+                toastMessage.show();
             }
-            toastMessage = Toast.makeText(this, "Конец списка", Toast.LENGTH_SHORT);
-            toastMessage.show();
         });
 
         textViewPopularity.setOnClickListener((view) -> {
@@ -118,7 +124,10 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
         LiveData<List<Movie>> moviesFromLiveData = viewModel.getMovies();
         // Теперь каждый раз, когда данные в БД будут меняться, мы их будем устанавливать у адаптера
-        moviesFromLiveData.observe(this, movies -> movieAdapter.setMovies(movies));
+        moviesFromLiveData.observe(this, movies -> {
+                }
+                //movieAdapter.setMovies(movies)
+        );
     }
 
     private void setMethodOfSort(boolean isTopRated) {
@@ -160,6 +169,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 e.printStackTrace();
             }
             viewModel.insertListMovies(movies);
+            movieAdapter.addMovies(movies);
+            page++;
         }
         loaderManager.destroyLoader(LOADER_ID);
     }
