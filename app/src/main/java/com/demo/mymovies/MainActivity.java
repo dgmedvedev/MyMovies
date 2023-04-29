@@ -12,9 +12,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -38,6 +41,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private Switch switchSort;
     private TextView textViewPopularity;
     private TextView textViewTopRated;
+    private ProgressBar progressBarLoading;
     private Toast toastMessage;
 
     private MainViewModel viewModel;
@@ -74,6 +78,15 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         return super.onOptionsItemSelected(item);
     }
 
+    private int getColumnCount() {
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        // теперь получаем хар-ки экрана и помещаем в объект DisplayMetrics
+        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        // получаем аппаратно независимые пиксели, разделив на плотность (displayMetrics.density)
+        int width = (int) (displayMetrics.widthPixels / displayMetrics.density);
+        return Math.max(width / 185, 2);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -83,8 +96,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         switchSort = findViewById(R.id.switchSort);
         textViewPopularity = findViewById(R.id.textViewPopularity);
         textViewTopRated = findViewById(R.id.textViewTopRated);
+        progressBarLoading = findViewById(R.id.progressBarLoading);
         recyclerViewPosters = findViewById(R.id.recyclerViewPosters);
-        recyclerViewPosters.setLayoutManager(new GridLayoutManager(this, 2));
+        recyclerViewPosters.setLayoutManager(new GridLayoutManager(this, getColumnCount()));
         movieAdapter = new MovieAdapter();
         recyclerViewPosters.setAdapter(movieAdapter);
 
@@ -127,8 +141,10 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         LiveData<List<Movie>> moviesFromLiveData = viewModel.getMovies();
         // Теперь каждый раз, когда данные в БД будут меняться, мы их будем устанавливать у адаптера
         moviesFromLiveData.observe(this, movies -> {
+                    if (page == 1) {
+                        movieAdapter.setMovies(movies);
+                    }
                 }
-                //movieAdapter.setMovies(movies)
         );
     }
 
@@ -157,6 +173,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     public Loader<JSONObject> onCreateLoader(int id, @Nullable Bundle bundle) {
         NetworkUtils.JSONLoader jsonLoader = new NetworkUtils.JSONLoader(this, bundle);
         jsonLoader.setOnStartLodingListener(() -> {
+            progressBarLoading.setVisibility(View.VISIBLE);
             isLoading = true;
         });
         return jsonLoader;
@@ -166,7 +183,10 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     public void onLoadFinished(@NonNull Loader<JSONObject> loader, JSONObject jsonObject) {
         ArrayList<Movie> movies = JSONUtils.getMoviesFromJSON(jsonObject);
         if (movies != null && !movies.isEmpty()) {
-            viewModel.deleteAllMovies();
+            if (page == 1) {
+                viewModel.deleteAllMovies();
+                movieAdapter.clear();
+            }
             try {
                 Thread.sleep(10);
             } catch (InterruptedException e) {
@@ -177,6 +197,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             page++;
         }
         isLoading = false;
+        progressBarLoading.setVisibility(View.INVISIBLE);
         loaderManager.destroyLoader(LOADER_ID);
     }
 
