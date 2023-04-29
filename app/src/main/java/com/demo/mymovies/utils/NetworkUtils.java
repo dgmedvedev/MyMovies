@@ -166,6 +166,15 @@ public class NetworkUtils {
     public static class JSONLoader extends AsyncTaskLoader<JSONObject> {
 
         private Bundle bundle;
+        private OnStartLodingListener onStartLodingListener;
+
+        public interface OnStartLodingListener {
+            void onStartLoading();
+        }
+
+        public void setOnStartLodingListener(OnStartLodingListener onStartLodingListener) {
+            this.onStartLodingListener = onStartLodingListener;
+        }
 
         public JSONLoader(@NonNull Context context, Bundle bundle) {
             super(context);
@@ -175,6 +184,9 @@ public class NetworkUtils {
         @Override
         protected void onStartLoading() {
             super.onStartLoading();
+            if (onStartLodingListener != null) {
+                onStartLodingListener.onStartLoading();
+            }
             forceLoad();
         }
 

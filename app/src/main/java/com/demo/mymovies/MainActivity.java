@@ -46,6 +46,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private LoaderManager loaderManager;
 
     private static int page = 1;
+    private static int methodOfSort;
     private static boolean isLoading = false;
 
     @Override
@@ -104,11 +105,12 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
         movieAdapter.setOnReachEndListener(() -> {
             if (!isLoading) {
-                if (toastMessage != null) {
-                    toastMessage.cancel();
-                }
-                toastMessage = Toast.makeText(this, "Конец списка", Toast.LENGTH_SHORT);
-                toastMessage.show();
+//                if (toastMessage != null) {
+//                    toastMessage.cancel();
+//                }
+//                toastMessage = Toast.makeText(this, "Конец списка", Toast.LENGTH_SHORT);
+//                toastMessage.show();
+                downloadData(methodOfSort, page);
             }
         });
 
@@ -131,7 +133,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     }
 
     private void setMethodOfSort(boolean isTopRated) {
-        int methodOfSort;
         if (isTopRated) {
             textViewTopRated.setTextColor(getResources().getColor(R.color.colorAccent));
             textViewPopularity.setTextColor(getResources().getColor(R.color.white));
@@ -141,7 +142,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             textViewPopularity.setTextColor(getResources().getColor(R.color.colorAccent));
             textViewTopRated.setTextColor(getResources().getColor(R.color.white));
         }
-        downloadData(methodOfSort, 1);
+        downloadData(methodOfSort, page);
     }
 
     private void downloadData(int methodOfSort, int page) {
@@ -155,6 +156,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     @Override
     public Loader<JSONObject> onCreateLoader(int id, @Nullable Bundle bundle) {
         NetworkUtils.JSONLoader jsonLoader = new NetworkUtils.JSONLoader(this, bundle);
+        jsonLoader.setOnStartLodingListener(() -> {
+            isLoading = true;
+        });
         return jsonLoader;
     }
 
@@ -172,6 +176,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             movieAdapter.addMovies(movies);
             page++;
         }
+        isLoading = false;
         loaderManager.destroyLoader(LOADER_ID);
     }
 
