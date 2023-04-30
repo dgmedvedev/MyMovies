@@ -13,6 +13,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.ImageView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,11 +31,13 @@ import com.squareup.picasso.Picasso;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 public class DetailActivity extends AppCompatActivity {
 
     private ImageView imageViewBigPoster;
     private ImageView imageViewAddToFavourite;
+    private ScrollView scrollViewInfo;
 
     private RecyclerView recyclerViewTrailers;
     private RecyclerView recyclerViewReviews;
@@ -54,6 +57,8 @@ public class DetailActivity extends AppCompatActivity {
     FavouriteMovie favouriteMovie;
 
     private MainViewModel viewModel;
+
+    private static String lang;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -84,8 +89,10 @@ public class DetailActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
+        lang = Locale.getDefault().getLanguage();
         imageViewBigPoster = findViewById(R.id.imageViewBigPoster);
         imageViewAddToFavourite = findViewById(R.id.imageViewAddToFavourite);
+        scrollViewInfo = findViewById(R.id.scrollViewInfo);
         textViewTitle = findViewById(R.id.textViewTitle);
         textViewOriginalTitle = findViewById(R.id.textViewOriginalTitle);
         textViewRating = findViewById(R.id.textViewRating);
@@ -108,14 +115,14 @@ public class DetailActivity extends AppCompatActivity {
 
         if (movie != null) {
             downloadContent(movie);
-            jsonObjectTrailers = NetworkUtils.getJSONForVideos(movie.getId());
+            jsonObjectTrailers = NetworkUtils.getJSONForVideos(movie.getId(), lang);
             jsonObjectReviews = NetworkUtils.getJSONForReviews(movie.getId());
             trailers = JSONUtils.getTrailersFromJSON(jsonObjectTrailers);
             reviews = JSONUtils.getReviewsFromJSON(jsonObjectReviews);
         }
         if (favouriteMovie != null) {
             downloadContent(favouriteMovie);
-            jsonObjectTrailers = NetworkUtils.getJSONForVideos(favouriteMovie.getId());
+            jsonObjectTrailers = NetworkUtils.getJSONForVideos(favouriteMovie.getId(), lang);
             jsonObjectReviews = NetworkUtils.getJSONForReviews(favouriteMovie.getId());
             trailers = JSONUtils.getTrailersFromJSON(jsonObjectTrailers);
             reviews = JSONUtils.getReviewsFromJSON(jsonObjectReviews);
@@ -158,6 +165,7 @@ public class DetailActivity extends AppCompatActivity {
         recyclerViewReviews.setAdapter(reviewAdapter);
         trailerAdapter.setTrailers(trailers);
         reviewAdapter.setReviews(reviews);
+        scrollViewInfo.smoothScrollTo(0, 0);
     }
 
     private void setFavourite() {
@@ -170,7 +178,7 @@ public class DetailActivity extends AppCompatActivity {
     }
 
     private void downloadContent(Movie movie) {
-        Picasso.get().load(movie.getBigPosterPath()).into(imageViewBigPoster);
+        Picasso.get().load(movie.getBigPosterPath()).placeholder(R.drawable.placeholder_large).into(imageViewBigPoster);
         textViewTitle.setText(movie.getTitle());
         textViewOriginalTitle.setText(movie.getOriginalTitle());
         textViewOverview.setText(movie.getOverview());
