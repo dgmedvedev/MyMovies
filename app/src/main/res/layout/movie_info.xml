@@ -6,10 +6,8 @@
 
     <TextView
         android:id="@+id/textViewLabelTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:text="Название:"
+        style="@style/LabelStyle"
+        android:text="@string/title"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -32,9 +30,7 @@
 
     <TextView
         android:id="@+id/textViewLabelOriginalTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="8dp"
+        style="@style/LabelStyle"
         android:text="Оригинальное название:"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textViewTitle" />
@@ -51,9 +47,7 @@
 
     <TextView
         android:id="@+id/textViewLabelRating"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="8dp"
+        style="@style/LabelStyle"
         android:text="Рейтинг:"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textViewOriginalTitle" />
@@ -70,9 +64,7 @@
 
     <TextView
         android:id="@+id/textViewLabelReleaseDate"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="8dp"
+        style="@style/LabelStyle"
         android:text="Дата релиза:"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textViewRating" />
@@ -89,18 +81,14 @@
 
     <TextView
         android:id="@+id/textViewLabelOverview"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="8dp"
+        style="@style/LabelStyle"
         android:text="Описание:"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textViewReleaseDate" />
 
     <TextView
         android:id="@+id/textViewOverview"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="8dp"
+        style="@style/LabelStyle"
         android:text="TextView"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textViewLabelOverview" />

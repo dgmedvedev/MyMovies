@@ -20,7 +20,6 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.demo.mymovies.adapters.MovieAdapter;
 import com.demo.mymovies.data.MainViewModel;
@@ -33,6 +32,7 @@ import org.json.JSONObject;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<JSONObject> {
 
@@ -42,7 +42,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private TextView textViewPopularity;
     private TextView textViewTopRated;
     private ProgressBar progressBarLoading;
-    private Toast toastMessage;
 
     private MainViewModel viewModel;
 
@@ -52,6 +51,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private static int page = 1;
     private static int methodOfSort;
     private static boolean isLoading = false;
+
+    private static String lang;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -91,6 +92,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        lang = Locale.getDefault().getLanguage();
         loaderManager = LoaderManager.getInstance(this);
         viewModel = new ViewModelProvider(this).get(MainViewModel.class);
         switchSort = findViewById(R.id.switchSort);
@@ -108,7 +110,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             setMethodOfSort(isChecked);
         });
         switchSort.setChecked(false);
-        downloadData(NetworkUtils.POPULARITY, 1);
+        downloadData(NetworkUtils.POPULARITY, 1, lang);
 
         movieAdapter.setOnPosterClickListener((position -> {
             Movie movie = movieAdapter.getMovies().get(position);
@@ -124,7 +126,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 //                }
 //                toastMessage = Toast.makeText(this, "Конец списка", Toast.LENGTH_SHORT);
 //                toastMessage.show();
-                downloadData(methodOfSort, page);
+                downloadData(methodOfSort, page, lang);
             }
         });
 
@@ -158,11 +160,11 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             textViewPopularity.setTextColor(getResources().getColor(R.color.colorAccent));
             textViewTopRated.setTextColor(getResources().getColor(R.color.white));
         }
-        downloadData(methodOfSort, page);
+        downloadData(methodOfSort, page, lang);
     }
 
-    private void downloadData(int methodOfSort, int page) {
-        URL url = NetworkUtils.buildURL(methodOfSort, page);
+    private void downloadData(int methodOfSort, int page, String lang) {
+        URL url = NetworkUtils.buildURL(methodOfSort, page, lang);
         Bundle bundle = new Bundle();
         bundle.putString("url", url.toString());
         loaderManager.restartLoader(LOADER_ID, bundle, this);

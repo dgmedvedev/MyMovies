@@ -1,11 +1,14 @@
 <resources>
     <string name="app_name">My Movies</string>
-    <string name="poster_of_movie">Постер к фильму</string>
-    <string name="most_popular">По популярности</string>
-    <string name="top_rated">По рейтингу</string>
-    <string name="add_to_favourite">Добавлено в избранное</string>
-    <string name="remove_from_favourite">Удалено из избранного</string>
-    <string name="item_main">Главная</string>
-    <string name="item_favourite">Избранное</string>
-    <string name="launch_trailer">Запустить трейлер</string>
+    <string name="poster_of_movie">Poster of movie</string>
+    <string name="most_popular">Most popular</string>
+    <string name="top_rated">Top rated</string>
+    <string name="add_to_favourite">Added to favourite</string>
+    <string name="remove_from_favourite">Remove from favourite</string>
+    <string name="item_main">Main</string>
+    <string name="item_favourite">Favourite</string>
+    <string name="launch_trailer">Launch trailer</string>
+    <string name="description_big_poster">Big poster of movie</string>
+    <string name="description_icon_favourite">Add/remove to/from favourite</string>
+    <string name="title">Title:</string>
 </resources>
